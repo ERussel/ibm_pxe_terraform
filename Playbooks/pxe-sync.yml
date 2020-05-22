@@ -17,7 +17,7 @@
        path: "{{item}}"
       register: folder_stats
       with_items:
-      - ["/mnt/iso-storage","/var/lib/tftpboot","/var/www/html/server/bionic"]
+      - ["/var/lib/tftpboot/pxeconfig.cfg"]
     - name: "Create directory structure"
       file:
         path: "{{item.item}}"
@@ -26,30 +26,19 @@
       when: item.stat.exists == false
       with_items:
       - "{{folder_stats.results}}"
-    - name: "Grab Ubuntu ISO for testing PXE boot"
-      get_url:
-        url: http://releases.ubuntu.com/16.04/ubuntu-16.04.6-server-amd64.iso
-        dest: /tmp/ubuntu-16.04.6-server-amd64.iso
-        mode: '0644'
-      register: get_ubuntu_iso
-    - debug: 
-        msg="ISO already downloaded"
-      when: get_ubuntu_iso|changed
-    - name: Mount Ubuntu server ISO read-only
-      mount: 
-        path: /mnt/iso-storage
-        src: /tmp/ubuntu-16.04.6-server-amd64.iso
-        fstype: iso9660
-        opts: ro,loop
-        state: mounted
-    - name: "Sync netboot files"
-      synchronize:
-        src: /mnt/iso-storage/install/netboot/
-        dest: /var/lib/tftpboot/
-      delegate_to: "{{ inventory_hostname }}"
-    - name: "Sync web files"
-      synchronize:
-        src: /mnt/iso-storage/
-        dest: /var/www/html/server/bionic/
-      delegate_to: "{{ inventory_hostname }}"
-
+    - name: "Copy kernel"
+      template:
+        src: images/kernel-x86_64-pc99
+        dest: var/lib/tftpboot/kernel-x86_64-pc99
+    - name: "Copy initrd"
+      template:
+        src: images/apps-x86_64-pc99
+        dest: var/lib/tftpboot/apps-x86_64-pc99
+    - name: "Copy pxe config"
+      template:
+        src: pxeconfig.cfg/default
+        dest: var/lib/tftpboot/pxeconfig.cfg/default
+    - name: "Copy bootloader"
+      template:
+        src: mboot.c32
+        dest: var/lib/tftpboot/mboot.c32

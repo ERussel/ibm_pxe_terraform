@@ -23,6 +23,7 @@ variable "datacenter" {
     us-east1  = "wdc04"
     us-east2  = "wdc06"
     us-east3  = "wdc07"
+    eu-de1 = "fra02"
   }
 }
 
