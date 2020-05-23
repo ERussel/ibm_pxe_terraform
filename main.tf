@@ -5,10 +5,10 @@ resource "random_id" "name" {
 
 # Create our PXE Vlan 
 resource "ibm_network_vlan" "pxe_vlan" {
-  name            = "pxe_vlan_${var.datacenter["eu-de1"]}"
-  datacenter      = var.datacenter["eu-de1"]
+  name            = "pxe_vlan_${var.datacenter["us-east2"]}"
+  datacenter      = var.datacenter["us-east2"]
   type            = "PRIVATE"
-  router_hostname = "bcr01a.${var.datacenter["eu-de1"]}"
+  router_hostname = "bcr01a.${var.datacenter["us-east2"]}"
 
   timeouts {
     delete = "30m"
@@ -27,16 +27,16 @@ resource "ibm_subnet" "dhcp_subnet" {
 
 # Create our VSI PXE instance 
 resource "ibm_compute_vm_instance" "pxe_server" {
-  hostname             = "pxe${var.datacenter["eu-de-1"]}"
+  hostname             = "pxe${var.datacenter["us-east2"]}"
   domain               = var.domain
   os_reference_code    = var.os_reference_code["u16"]
-  datacenter           = var.datacenter["eu-de1"]
+  datacenter           = var.datacenter["us-east2"]
   network_speed        = 1000
   hourly_billing       = true
   private_network_only = false
   user_metadata        = file("install.yml")
   flavor_key_name      = var.flavor_key_name["pxe"]
-  tags                 = ["rirussel", "pxe-server", var.datacenter["eu-de1"]]
+  tags                 = ["rirussel", "pxe-server", var.datacenter["us-east2"]]
   private_vlan_id      = ibm_network_vlan.pxe_vlan.id
   local_disk           = false
 }
@@ -125,16 +125,11 @@ resource "ibm_compute_bare_metal" "no_os" {
   depends_on = [null_resource.run_playbook]
 
   # Mandatory fields
-  package_key_name     = "SINGLE_E31270_V3_2_DRIVES"
-  process_key_name     = "INTEL_INTEL_XEON_E31270_V3_2_10"
-  memory               = 32
-  os_key_name          = "OS_NO_OPERATING_SYSTEM"
   hostname             = "no-os"
   domain               = var.domain
-  datacenter           = var.datacenter["eu-de1"]
-  network_speed        = 10000
-  public_bandwidth     = 500
-  disk_key_names       = ["HARD_DRIVE_2TB_SATA", "HARD_DRIVE_2TB_SATA"]
+  datacenter           = var.datacenter["us-east2"]
+  os_reference_code    = "NO_OS"
+  fixed_config_preset  = "1U_1270_V3_2X2TB_NORAID"
   hourly_billing       = true
   private_network_only = false
   unbonded_network     = true

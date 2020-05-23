@@ -14,7 +14,7 @@ variable "ibm_sl_api_key" {
 }
 
 variable "datacenter" {
-  type = map(string)
+  type = map
 
   default = {
     us-south1 = "dal10"
@@ -23,12 +23,12 @@ variable "datacenter" {
     us-east1  = "wdc04"
     us-east2  = "wdc06"
     us-east3  = "wdc07"
-    eu-de1 = "fra02"
+    eu-de1    = "fra02"
   }
 }
 
 variable "os_reference_code" {
-  type = map(string)
+  type = map
 
   default = {
     u16  = "UBUNTU_16_64"
@@ -37,7 +37,7 @@ variable "os_reference_code" {
 }
 
 variable "flavor_key_name" {
-  type = map(string)
+  type = map
 
   default = {
     pxe = "B1_2X4X100"

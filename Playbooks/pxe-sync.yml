@@ -17,7 +17,7 @@
        path: "{{item}}"
       register: folder_stats
       with_items:
-      - ["/var/lib/tftpboot/pxeconfig.cfg"]
+      - ["/var/lib/tftpboot/pxelinux.cfg"]
     - name: "Create directory structure"
       file:
         path: "{{item.item}}"
@@ -27,18 +27,18 @@
       with_items:
       - "{{folder_stats.results}}"
     - name: "Copy kernel"
-      template:
+      copy:
         src: images/kernel-x86_64-pc99
-        dest: var/lib/tftpboot/kernel-x86_64-pc99
+        dest: /var/lib/tftpboot/kernel-x86_64-pc99
     - name: "Copy initrd"
-      template:
+      copy:
         src: images/apps-x86_64-pc99
-        dest: var/lib/tftpboot/apps-x86_64-pc99
+        dest: /var/lib/tftpboot/apps-x86_64-pc99
     - name: "Copy pxe config"
-      template:
-        src: pxeconfig.cfg/default
-        dest: var/lib/tftpboot/pxeconfig.cfg/default
+      copy:
+        src: pxelinux.cfg/default
+        dest: /var/lib/tftpboot/pxelinux.cfg/default
     - name: "Copy bootloader"
-      template:
+      copy:
         src: mboot.c32
-        dest: var/lib/tftpboot/mboot.c32
+        dest: /var/lib/tftpboot/mboot.c32
